@@ -1,0 +1,105 @@
+# Docker build ignore file for better caching performance
+# This file improves build speed by excluding unnecessary files from build context
+
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Docker files
+Dockerfile*
+docker-compose*
+.dockerignore
+.dockerbuildignore
+
+# Documentation
+*.md
+docs/
+.github/
+
+# Development files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Build artifacts
+target/
+build/
+dist/
+out/
+
+# Node modules (if any)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env*
+!.env.example
+
+# Backup files
+backups/
+*.backup
+*.bak
+
+# Scripts (not needed in container)
+scripts/
+
+# Test files
+tests/
+**/*_test.rs
+**/*_test.go
+**/*_test.py
+
+# Coverage reports
+coverage/
+*.lcov
+*.cover
+
+# Tool configuration
+.eslintrc*
+.prettierrc*
+.editorconfig
+
+# Local development
+.local/
+local/
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Database files (local development)
+*.db
+*.sqlite
+*.sqlite3
+
+# Postman collections
+postman_collection.json
+
+# Analysis reports
+*ANALYSIS_REPORT.md
+*OPTIMIZATION_REPORT.md
+
+# Lock files (already copied separately)
+# Cargo.lock
+# package-lock.json
+# yarn.lock
