@@ -7,7 +7,6 @@ mod models;
 mod routes;
 mod utils;
 
-use axum::Router;
 use config::Config;
 use sqlx::PgPool;
 use std::net::SocketAddr;

@@ -39,5 +39,8 @@ chrono = { version = "0.4", features = ["serde"] }
 # Validation
 validator = { version = "0.18", features = ["derive"] }
 
+# Fix for base64ct edition2024 compatibility issue
+base64ct = "=1.6.0"
+
 [dev-dependencies]
 reqwest = { version = "0.11", features = ["json"] }

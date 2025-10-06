@@ -18,14 +18,17 @@ pub async fn create_item(
     Json(payload): Json<CreateItem>,
 ) -> AppResult<(StatusCode, Json<ItemResponse>)> {
     // Validate input
-    payload.validate()
+    payload
+        .validate()
         .map_err(|e| AppError::Validation(e.to_string()))?;
 
-    let user_uuid: Uuid = user_id.0.parse()
+    let user_uuid: Uuid = user_id
+        .0
+        .parse()
         .map_err(|_| AppError::Internal("Invalid user ID format".to_string()))?;
 
     let item = sqlx::query_as::<_, Item>(
-        "INSERT INTO items (user_id, title, description) VALUES ($1, $2, $3) RETURNING *"
+        "INSERT INTO items (user_id, title, description) VALUES ($1, $2, $3) RETURNING *",
     )
     .bind(user_uuid)
     .bind(&payload.title)
@@ -40,11 +43,13 @@ pub async fn get_items(
     State(state): State<AppState>,
     user_id: axum::Extension<String>,
 ) -> AppResult<Json<Vec<ItemResponse>>> {
-    let user_uuid: Uuid = user_id.0.parse()
+    let user_uuid: Uuid = user_id
+        .0
+        .parse()
         .map_err(|_| AppError::Internal("Invalid user ID format".to_string()))?;
 
     let items = sqlx::query_as::<_, Item>(
-        "SELECT * FROM items WHERE user_id = $1 ORDER BY created_at DESC"
+        "SELECT * FROM items WHERE user_id = $1 ORDER BY created_at DESC",
     )
     .bind(user_uuid)
     .fetch_all(&state.db)
@@ -59,17 +64,17 @@ pub async fn get_item(
     user_id: axum::Extension<String>,
     Path(item_id): Path<Uuid>,
 ) -> AppResult<Json<ItemResponse>> {
-    let user_uuid: Uuid = user_id.0.parse()
+    let user_uuid: Uuid = user_id
+        .0
+        .parse()
         .map_err(|_| AppError::Internal("Invalid user ID format".to_string()))?;
 
-    let item = sqlx::query_as::<_, Item>(
-        "SELECT * FROM items WHERE id = $1 AND user_id = $2"
-    )
-    .bind(item_id)
-    .bind(user_uuid)
-    .fetch_optional(&state.db)
-    .await?
-    .ok_or_else(|| AppError::NotFound("Item not found".to_string()))?;
+    let item = sqlx::query_as::<_, Item>("SELECT * FROM items WHERE id = $1 AND user_id = $2")
+        .bind(item_id)
+        .bind(user_uuid)
+        .fetch_optional(&state.db)
+        .await?
+        .ok_or_else(|| AppError::NotFound("Item not found".to_string()))?;
 
     Ok(Json(item.into()))
 }
@@ -81,21 +86,23 @@ pub async fn update_item(
     Json(payload): Json<UpdateItem>,
 ) -> AppResult<Json<ItemResponse>> {
     // Validate input
-    payload.validate()
+    payload
+        .validate()
         .map_err(|e| AppError::Validation(e.to_string()))?;
 
-    let user_uuid: Uuid = user_id.0.parse()
+    let user_uuid: Uuid = user_id
+        .0
+        .parse()
         .map_err(|_| AppError::Internal("Invalid user ID format".to_string()))?;
 
     // Check if item exists and belongs to user
-    let existing_item = sqlx::query_as::<_, Item>(
-        "SELECT * FROM items WHERE id = $1 AND user_id = $2"
-    )
-    .bind(item_id)
-    .bind(user_uuid)
-    .fetch_optional(&state.db)
-    .await?
-    .ok_or_else(|| AppError::NotFound("Item not found".to_string()))?;
+    let _existing_item =
+        sqlx::query_as::<_, Item>("SELECT * FROM items WHERE id = $1 AND user_id = $2")
+            .bind(item_id)
+            .bind(user_uuid)
+            .fetch_optional(&state.db)
+            .await?
+            .ok_or_else(|| AppError::NotFound("Item not found".to_string()))?;
 
     // Update item
     let item = sqlx::query_as::<_, Item>(
@@ -106,7 +113,7 @@ pub async fn update_item(
             status = COALESCE($3, status)
         WHERE id = $4 AND user_id = $5
         RETURNING *
-        "#
+        "#,
     )
     .bind(payload.title)
     .bind(payload.description)
@@ -124,16 +131,16 @@ pub async fn delete_item(
     user_id: axum::Extension<String>,
     Path(item_id): Path<Uuid>,
 ) -> AppResult<StatusCode> {
-    let user_uuid: Uuid = user_id.0.parse()
+    let user_uuid: Uuid = user_id
+        .0
+        .parse()
         .map_err(|_| AppError::Internal("Invalid user ID format".to_string()))?;
 
-    let result = sqlx::query(
-        "DELETE FROM items WHERE id = $1 AND user_id = $2"
-    )
-    .bind(item_id)
-    .bind(user_uuid)
-    .execute(&state.db)
-    .await?;
+    let result = sqlx::query("DELETE FROM items WHERE id = $1 AND user_id = $2")
+        .bind(item_id)
+        .bind(user_uuid)
+        .execute(&state.db)
+        .await?;
 
     if result.rows_affected() == 0 {
         return Err(AppError::NotFound("Item not found".to_string()));

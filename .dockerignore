@@ -1,0 +1,46 @@
+# Version control
+.git
+.gitignore
+.github
+
+# Build artifacts
+target/
+**/*.rs.bk
+*.pdb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.log
+
+# Documentation  
+README.md
+docs/
+*.md
+!migrations/*.sql
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Testing
+tests/
+coverage/
+benchmarks/
+
+# Misc
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Note: Cargo.lock is intentionally NOT excluded
+# We need it in Docker builds for reproducible dependency resolution

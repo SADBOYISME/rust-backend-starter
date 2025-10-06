@@ -1,4 +1,5 @@
-version: '3.8'
+# Docker Compose configuration for Rust Backend Starter
+# Note: 'version' field is deprecated in Docker Compose v2+
 
 services:
   postgres:
@@ -19,21 +20,31 @@ services:
       retries: 5
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.optimized
     container_name: rust_starter_app
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/rust_starter_db
       HOST: 0.0.0.0
       PORT: 8000
-      JWT_SECRET: your-super-secret-jwt-key-change-this
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-this}
       JWT_EXPIRATION: 86400
-      RUST_LOG: debug
-      APP_ENV: development
+      RUST_LOG: ${RUST_LOG:-info,tower_http=info}
+      APP_ENV: ${APP_ENV:-development}
     ports:
       - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
     restart: unless-stopped
 
 volumes:

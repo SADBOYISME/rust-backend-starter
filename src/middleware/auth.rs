@@ -1,15 +1,7 @@
-use axum::{
-    extract::Request,
-    http::{header, StatusCode},
-    middleware::Next,
-    response::Response,
-};
 use crate::{config::Config, error::AppError, utils::auth::verify_token};
+use axum::{extract::Request, http::header, middleware::Next, response::Response};
 
-pub async fn auth_middleware(
-    mut req: Request,
-    next: Next,
-) -> Result<Response, AppError> {
+pub async fn auth_middleware(mut req: Request, next: Next) -> Result<Response, AppError> {
     let auth_header = req
         .headers()
         .get(header::AUTHORIZATION)
